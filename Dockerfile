@@ -11,8 +11,9 @@ RUN apt-get update && apt-get install -y \
 # Copy folders in /app to /app
 COPY /app /app
 
-# Pip-install BeautifulSoup
+# Pip-install BeautifulSoup and requests
 RUN pip install beautifulsoup4
+RUN pip install requests
 
 # Run app
-CMD python /app/cryptoTracker.py
+CMD ["python", "-u", "/app/cryptoTracker.py"]
