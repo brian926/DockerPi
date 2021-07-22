@@ -4,6 +4,15 @@ from bs4 import BeautifulSoup
 import requests
 import time
 import json
+import mysql.connector
+
+mydb = mysql.connector.connect(
+  host="mysql",
+  user="root",
+  password="secret",
+  database="crypto"
+)
+
 
 DOGE = 'DOGEUSDT'
 BTC = 'BTCUSDT'
@@ -32,6 +41,7 @@ def get_prices():
   while True:
     t = time.localtime()
     current_time = time.strftime("%H:%M", t)
+    sql_time = time.strftime("%d:%H:%M", t)
     # Get price
     BTCPrice = get_ticker_price(BTC)
     DOGEPrice = get_ticker_price(DOGE)
@@ -39,5 +49,15 @@ def get_prices():
     BTCChange = float(get_ticker_change(BTC))
     DOGEChange = float(get_ticker_change(DOGE))
     print("BTC: "+BTCPrice+" Change: "+str(BTCChange)+" DOGE: "+DOGEPrice+" Change: "+str(DOGEChange)+" at "+str(current_time))
+
+    cursor = mydb.cursor()
+    sql_b = "INSERT INTO Bitcoin (price, time) VALUES (%s, %s)"
+    val_b = (BTCPrice, sql_time)
+    sql_d = "INSERT INTO Dogecoin (price, time) VALUES (%s, %s)"
+    val_d = (DOGEPrice, sql_time)
+    cursor.execute(sql_b, val_b)
+    cursor.execute(sql_d, val_d)
+    mydb.commit()
+
 
 get_prices()

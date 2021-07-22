@@ -1,24 +1,17 @@
 version: "3.8"
 
-    services:
-        app:
-            image: dockerpi
-            working_dir: /app
-            volumes:
-                - ./:/app
-            environment:
-                MYSQL_HOST: mysql
-                MYSQL_USER: root
-                MYSQL_PASSWORD: secret
-                MYSQL_DB: crypto
+services:
+    app:
+        image: dockerpi
+        working_dir: /app
 
-        mysql:
-            image: mysql:8.0
-            volumes:
-                - ./:/var/lib/mysql
-            environment:
-                MYSQL_ROOT_PASSWORD: secret
-                MYSQL_DATABASE: crypto
+    mysql:
+        image: mysql:8.0
+        volumes:
+          - mysql-data/:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: secret
+            MYSQL_DATABASE: crypto
 
-    volumes:
-        - ./:app
+volumes:
+  mysql-data:
