@@ -14,6 +14,7 @@ COPY /app /app
 # Pip-install BeautifulSoup and requests
 RUN pip install beautifulsoup4
 RUN pip install requests
+RUN pip install mysql-connector
 
 # Run app
 CMD ["python", "-u", "/app/cryptoTracker.py"]

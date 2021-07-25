@@ -5,13 +5,17 @@ services:
         image: dockerpi
         working_dir: /app
 
-    mysql:
+    mysqldb:
         image: mysql:8.0
+        ports:
+          - 33065:33065
         volumes:
           - mysql-data/:/var/lib/mysql
         environment:
-            MYSQL_ROOT_PASSWORD: secret
-            MYSQL_DATABASE: crypto
+          - MYSQL_USER=PyU
+          - MYSQL_PASSWORD=Pyp
+          - MYSQL_ROOT_PASSWORD=secret
+          - MYSQL_DATABASE=crypto
 
 volumes:
   mysql-data:
