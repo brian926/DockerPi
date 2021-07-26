@@ -6,42 +6,57 @@ import time
 import json
 import mysql.connector
 
-try:
-  mydb = mysql.connector.connect(
-    host="mysqldb",
-    port=33065,
-    user="PyU",
-    password="PyP",
-    database="crypto"
-  )
-except mysql.connector.Error as err:
-  if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-      print("Something is wrong with your user name or password")
-  elif err.errno == errorcode.ER_BAD_DB_ERROR:
-      print("Database does not exist")
-  else:
+def check_db():
+  connection = False
+  while connection==False:
+    try:
+      mydb = mysql.connector.connect(
+        host="mysqldb",
+        user="PyU",
+        password="PyP",
+      )
+      print("Connected to database")
+      connection=True
+    except mysql.connector.Error as err:
       print(err)
+      pass
+    time.sleep(60)
 
-cursor = mydb.cursor()
-try:
-  cursor.execute("DROP TABLE IF EXISTS Bitcoin")
-  print("created Bitcoin table")
-except:
-  print("failed to create bitcoin table")
-  raise
-cursor.execute("DROP TABLE IF EXISTS Dogecoin")
+def create_tables():
+  try:
+    mydb = mysql.connector.connect(
+      host="mysqldb",
+      user="PyU",
+      password="PyP",
+      database="crypto"
+    )
+    print("Connected to database")
+  except mysql.connector.Error as err:
+    if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+        print("Something is wrong with your user name or password")
+    elif err.errno == errorcode.ER_BAD_DB_ERROR:
+        print("Database does not exist")
+    else:
+        print(err)
+  cursor = mydb.cursor()
+  try:
+    cursor.execute("DROP TABLE IF EXISTS Bitcoin")
+    sql ='''CREATe TABLE Bitcoin(
+    PRICE FLOAT,
+    TIME TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )'''
+    cursor.execute(sql)
+    print("created Bitcoin table")
+  except:
+    print("failed to create bitcoin table")
+    raise
 
-sql ='''CREATe TABLE Bitcoin(
-  PRICE FLOAT,
-  TIME TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-)'''
-cursor.execute(sql)
-
-sql ='''CREATe TABLE Dogecoin(
-  PRICE FLOAT,
-  TIME TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-)'''
-cursor.execute(sql)
+  cursor.execute("DROP TABLE IF EXISTS Dogecoin")
+  sql ='''CREATe TABLE Dogecoin(
+    PRICE FLOAT,
+    TIME TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  )'''
+  cursor.execute(sql)
 
 DOGE = 'DOGEUSDT'
 BTC = 'BTCUSDT'
@@ -66,6 +81,13 @@ def get_ticker_change(ticker):
 def get_prices():
   oldtimeBTC = time.time()
   oldtimeDGE = time.time()
+  mydb = mysql.connector.connect(
+    host="mysqldb",
+    user="PyU",
+    password="PyP",
+    database="crypto"
+  )
+  cursor = mydb.cursor()
   # Create infinite loop to send/show price
   while True:
     t = time.localtime()
@@ -96,5 +118,6 @@ def get_prices():
       print("Something went wrong : {}".format(err))
       raise
 
-
+check_db()
+create_tables()
 get_prices()
