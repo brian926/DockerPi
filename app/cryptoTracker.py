@@ -1,5 +1,4 @@
 # Descript: Send Crypto currency prices
-# Import Libraries
 from bs4 import BeautifulSoup
 import requests
 import time
@@ -16,12 +15,13 @@ def check_db():
         user="PyU",
         password="PyP",
       )
-      print("Connected to database")
+      print("Database is up")
       connection=True
+      mydb.close()
     except mysql.connector.Error as err:
       print(err)
       pass
-    time.sleep(60)
+    time.sleep(30)
 
 # Create tables in the db
 def create_tables():
@@ -41,17 +41,15 @@ def create_tables():
     else:
       print(err)
   cursor = mydb.cursor()
-  try:
-    cursor.execute("DROP TABLE IF EXISTS Bitcoin")
-    sql ='''CREATe TABLE Bitcoin(
-    PRICE FLOAT,
-    TIME TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-    )'''
-    cursor.execute(sql)
-    print("created Bitcoin table")
-  except:
-    print("failed to create bitcoin table")
-    raise
+
+  cursor.execute("DROP TABLE IF EXISTS Bitcoin")
+  sql ='''CREATE TABLE Bitcoin(
+  PRICE FLOAT,
+  TIME TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  )'''
+  cursor.execute(sql)
+  print("created Bitcoin table")
+
   
   cursor.execute("DROP TABLE IF EXISTS Dogecoin")
   sql ='''CREATe TABLE Dogecoin(
@@ -59,6 +57,8 @@ def create_tables():
     TIME TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
   )'''
   cursor.execute(sql)
+
+  mydb.close()
 
 DOGE = 'DOGEUSDT'
 BTC = 'BTCUSDT'
@@ -105,17 +105,20 @@ def get_prices():
 
     sql_b = "INSERT INTO Bitcoin (price, time) VALUES (%s, %s)"
     val_b = (BTCPrice, sql_time)
+
     sql_d = "INSERT INTO Dogecoin (price, time) VALUES (%s, %s)"
     val_d = (DOGEPrice, sql_time)
+
     try:
       cursor.execute(sql_b, val_b)
-      print("Excuted commit")
+      print("Inserted {} at {}".format(BTCPrice, sql_time))
     except mysql.connector.Error as err:
       print("Something went wrong : {}".format(err))
       raise
     
     try:
       cursor.execute(sql_d, val_d)
+      print("Inserted {} at {}".format(DOGEPrice, sql_time))
     except mysql.connector.Error as err:
       print("Something went wrong : {}".format(err))
       raise
