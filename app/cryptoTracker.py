@@ -81,8 +81,7 @@ def get_ticker_change(ticker):
 
 # Grab prices
 def get_prices():
-  oldtimeBTC = time.time()
-  oldtimeDGE = time.time()
+
   mydb = mysql.connector.connect(
     host="mysqldb",
     user="PyU",
@@ -94,7 +93,7 @@ def get_prices():
   while True:
     t = time.localtime()
     current_time = time.strftime("%H:%M", t)
-    sql_time = time.strftime("%d:%H:%M", t)
+    sql_time = time.strftime('%Y-%m-%d %H:%M:%S')
     # Get price
     BTCPrice = get_ticker_price(BTC)
     DOGEPrice = get_ticker_price(DOGE)
@@ -122,6 +121,8 @@ def get_prices():
     except mysql.connector.Error as err:
       print("Something went wrong : {}".format(err))
       raise
+
+    time.sleep(60)
 
 check_db()
 create_tables()
