@@ -6,6 +6,7 @@ import time
 import json
 import mysql.connector
 
+# Check connection to the db, sleep if db isn't up
 def check_db():
   connection = False
   while connection==False:
@@ -22,6 +23,7 @@ def check_db():
       pass
     time.sleep(60)
 
+# Create tables in the db
 def create_tables():
   try:
     mydb = mysql.connector.connect(
@@ -33,11 +35,11 @@ def create_tables():
     print("Connected to database")
   except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-        print("Something is wrong with your user name or password")
+      print("Something is wrong with your user name or password")
     elif err.errno == errorcode.ER_BAD_DB_ERROR:
-        print("Database does not exist")
+      print("Database does not exist")
     else:
-        print(err)
+      print(err)
   cursor = mydb.cursor()
   try:
     cursor.execute("DROP TABLE IF EXISTS Bitcoin")
@@ -50,7 +52,7 @@ def create_tables():
   except:
     print("failed to create bitcoin table")
     raise
-
+  
   cursor.execute("DROP TABLE IF EXISTS Dogecoin")
   sql ='''CREATe TABLE Dogecoin(
     PRICE FLOAT,
@@ -77,7 +79,7 @@ def get_ticker_change(ticker):
   site_json = json.loads(soup.text)
   return site_json['priceChangePercent']
 
-  # Grab prices
+# Grab prices
 def get_prices():
   oldtimeBTC = time.time()
   oldtimeDGE = time.time()
