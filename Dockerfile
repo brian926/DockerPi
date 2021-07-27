@@ -1,20 +1,17 @@
 # Use Python Image
-FROM python
+FROM python:alpine3.14
 
 # Set working dir to /app
 WORKDIR /app
 
 # Run update and install Pip
-RUN apt-get update && apt-get install -y \
-    python-pip
+RUN apt-get update
 
 # Copy folders in /app to /app
 COPY /app /app
 
 # Pip-install BeautifulSoup and requests
-RUN pip install beautifulsoup4
-RUN pip install requests
-RUN pip install mysql-connector
+RUN pip install -r requirements.txt
 
 # Run app
 CMD ["python", "-u", "/app/cryptoTracker.py"]
