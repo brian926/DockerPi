@@ -41,23 +41,22 @@ def create_tables():
     else:
       print(err)
   cursor = mydb.cursor()
+  stmt="SHOW TABLES LIKE 'Bitcoin'"
+  cursor.execute(stmt)
+  result = cursor.fetchone()
+  if result:
+    print("Bitcoin table exist")
+  else:
+    print("Bitcoin table does not exist")
 
-  cursor.execute("DROP TABLE IF EXISTS Bitcoin")
-  sql ='''CREATE TABLE Bitcoin(
-  PRICE FLOAT,
-  TIME TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-  )'''
-  cursor.execute(sql)
-  print("created Bitcoin table")
-
-  
-  cursor.execute("DROP TABLE IF EXISTS Dogecoin")
-  sql ='''CREATe TABLE Dogecoin(
-    PRICE FLOAT,
-    TIME TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-  )'''
-  cursor.execute(sql)
-
+  stmt="SHOW TABLES LIKE 'Dogecoin'"
+  cursor.execute(stmt)
+  result = cursor.fetchone()
+  if result:
+    print("Dogecoin table exist")
+  else:
+    print("Dogecoin table does not exist")
+    
   mydb.close()
 
 DOGE = 'DOGEUSDT'

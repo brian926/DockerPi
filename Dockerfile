@@ -5,7 +5,7 @@ FROM python:alpine3.14
 WORKDIR /app
 
 # Run update and install Pip
-RUN apt-get update
+RUN apk update
 
 # Copy folders in /app to /app
 COPY /app /app

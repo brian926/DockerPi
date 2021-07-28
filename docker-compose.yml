@@ -6,9 +6,11 @@ services:
         image: mysql:8.0
         volumes:
           - mysql-data:/var/lib/mysql
+          - ./data:/docker-entrypoint-initdb.d
         command: mysqld --default-authentication-plugin=mysql_native_password
         restart: always
         environment:
+          - TZ=America/New_York
           - MYSQL_USER=PyU
           - MYSQL_PASSWORD=PyP
           - MYSQL_ROOT_PASSWORD=secret
@@ -19,6 +21,8 @@ services:
     app:
       image: dockerpi
       working_dir: /app
+      environment:
+        - TZ=America/New_York
       depends_on:
         - mysqldb
       networks:
