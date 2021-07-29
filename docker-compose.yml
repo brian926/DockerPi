@@ -2,32 +2,40 @@ version: "3.8"
 
 services:
 
+    # MySQL build
     mysqldb:
         image: mysql:8.0
         volumes:
+          # Use MySQL for db volume, copy data folder to init to run queries
           - mysql-data:/var/lib/mysql
           - ./data:/docker-entrypoint-initdb.d
+        # Switch to native password so py program can connect to mysql
         command: mysqld --default-authentication-plugin=mysql_native_password
         restart: always
         environment:
+          # Set timezone and variables
           - TZ=America/New_York
           - MYSQL_USER=PyU
           - MYSQL_PASSWORD=PyP
           - MYSQL_ROOT_PASSWORD=secret
           - MYSQL_DATABASE=crypto
+        # Set networks to ensure containers are on the same networks
         networks:
           - local
 
     app:
+      # Use custom image
       image: dockerpi
       working_dir: /app
       environment:
+        # Set timezone
         - TZ=America/New_York
+      # Wait on mysqldb before starting
       depends_on:
         - mysqldb
       networks:
         - local
-
+# Create network and state volume
 networks:
   local:
     driver: bridge

@@ -23,8 +23,9 @@ def check_db():
       pass
     time.sleep(30)
 
-# Create tables in the db
-def create_tables():
+# Check if tables were created in MySQL
+def check_tables():
+  # Connect to DB
   try:
     mydb = mysql.connector.connect(
       host="mysqldb",
@@ -40,6 +41,7 @@ def create_tables():
       print("Database does not exist")
     else:
       print(err)
+  # Show tables and if True, table exists
   cursor = mydb.cursor()
   stmt="SHOW TABLES LIKE 'Bitcoin'"
   cursor.execute(stmt)
@@ -59,6 +61,7 @@ def create_tables():
     
   mydb.close()
 
+# Get tickers for API
 DOGE = 'DOGEUSDT'
 BTC = 'BTCUSDT'
 
@@ -80,7 +83,7 @@ def get_ticker_change(ticker):
 
 # Grab prices
 def get_prices():
-
+  # Start DB connection
   mydb = mysql.connector.connect(
     host="mysqldb",
     user="PyU",
@@ -99,8 +102,8 @@ def get_prices():
     # Check changes
     BTCChange = float(get_ticker_change(BTC))
     DOGEChange = float(get_ticker_change(DOGE))
-    # print("BTC: "+BTCPrice+" Change: "+str(BTCChange)+" DOGE: "+DOGEPrice+" Change: "+str(DOGEChange)+" at "+str(current_time))
 
+    # Build queries, and tries to insert prices and timestamps into DB
     sql_b = "INSERT INTO Bitcoin (price, time) VALUES (%s, %s)"
     val_b = (BTCPrice, sql_time)
 
@@ -120,9 +123,11 @@ def get_prices():
     except mysql.connector.Error as err:
       print("Something went wrong : {}".format(err))
       raise
-
+    
+    # Sleep for 60 seconds
     time.sleep(60)
 
+# First check the DB for connection, then check if tables are there, and lastly run
 check_db()
-create_tables()
+check_tables()
 get_prices()
