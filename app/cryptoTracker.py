@@ -5,6 +5,11 @@ import time
 import json
 import mysql.connector
 
+
+# Get tickers for API
+DOGE = 'DOGEUSDT'
+BTC = 'BTCUSDT'
+
 # Check connection to the db, sleep if db isn't up
 def check_db():
   connection = False
@@ -60,10 +65,6 @@ def check_tables():
     print("Dogecoin table does not exist")
     
   mydb.close()
-
-# Get tickers for API
-DOGE = 'DOGEUSDT'
-BTC = 'BTCUSDT'
 
 def get_ticker_price(ticker):
   # Curl ticker info
@@ -127,7 +128,9 @@ def get_prices():
     # Sleep for 60 seconds
     time.sleep(60)
 
-# First check the DB for connection, then check if tables are there, and lastly run
-check_db()
-check_tables()
-get_prices()
+if __name__=='__main__':
+    
+  # First check the DB for connection, then check if tables are there, and lastly run
+  check_db()
+  check_tables()
+  get_prices()
